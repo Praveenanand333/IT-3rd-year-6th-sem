@@ -1,0 +1,163 @@
+<River rdf:ID="Yangtze"
+            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+            xmlns="http://www.geodesy.org/river#"
+            xml:base="http://www.china.org/geography/rivers">
+
+Resource URI = concatenation(xml:base, '#', rdf:ID)
+                        = concatenation(http://www.china.org/geography/rivers, '#', "Yangtze")
+                        = http://www.china.org/geography/rivers#Yangtze
+
+Instead of identifying a resource with a relative URI (which then requires a base URI to be prepended), 
+we can use rdf:about <River rdf:about="http://www.china.org/geography/rivers#Yangtze"
+
+Naming convention:
+The convention is to use a capital letter to start a type (class) name, and use a lowercase
+letter to start a property name.
+
+<?xml version="1.0"?>
+<River id="Yangtze"
+            xmlns="http://www.geodesy.org/river">
+     <length>6300 kilometers</length>
+     <startingLocation>western China's Qinghai-Tibet Plateau</startingLocation>
+     <endingLocation>East China Sea</endingLocation>
+     <obstacle>
+         <Dam id="ThreeGorges"
+                    xmlns="http://www.geodesy.org/dam">
+             <name>The Three Gorges Dam</name>
+             <width>1.5 miles</width>
+             <height>610 feet</height>
+             <cost>$30 billion</cost>
+         </Dam>
+     </obstacle>
+</River>
+
+
+
+When should rdf:ID be used?  When should rdf:about be used?
+When you want to introduce a resource, and provide an initial set of information about a resource use rdf:ID
+When you want to extend the information about a resource use rdf:about
+
+
+   <length rdf:parseType="Resource">
+               <rdf:value>6300</rdf:value>
+               <uom:units>kilometers</uom:units>
+     </length>
+
+
+The rdf:Bag type is used to represent an unordered collection.
+The rdf:Alt type is used to represent a set of alternate properties.
+The rdf:Seq type is used to represent a sequence of properties.
+The property, rdf:li ("list item"), is provided by RDF for use with either rdf:Bag, rdf:Alt, or rdf:Seq.
+
+
+
+<webLocation>
+          <rdf:Alt>
+               <rdf:li>http://www.bn.com</rdf:li>
+               <rdf:li>http://www.barnesandnoble.com</rdf:li>
+          </rdf:Alt>
+     </webLocation>
+
+<attendees>
+          <rdf:Bag>
+               <rdf:li>John Smith</rdf:li>
+               <rdf:li>Sally Jones</rdf:li>
+          </rdf:Bag>
+     </attendees>
+
+
+<activities>
+          <rdf:Seq>
+               <rdf:li>Meet with CEO at 10am</rdf:li>
+               <rdf:li>Luncheon at The Eatery</rdf:li>
+               <rdf:li>Flight at 3pm</rdf:li>
+          </rdf:Seq>
+     </activities>
+
+
+rdf:parseType="Collection"
+This may be added as an attribute of a property to indicate that the contents of the property is a list 
+of resources.
+
+<paragraph rdf:parseType="Literal">
+
+The advantage of structuring your XML as resource/property/value triples is enhanced interoperability.
+When you use rdf:parseType="Literal" you lose the ability for a tool to instantly take advantage of the
+ resource/property/value structure (since you are, by definition, saying that the data doesn't have this 
+ structure).
+Lesson Learned: use rdf:parseType="Literal" sparingly!
+
+a property can be represented either as a child element, or as an attribute.  (Of course, a property can only
+ be represented as an attribute if it has a literal value, not a structured value.)
+
+<?xml version="1.0"?>
+<River rdf:ID="Yangtze"
+            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+            xmlns="http://www.geodesy.org/river#">
+     <length>6300 kilometers</length>
+     <startingLocation>western China's Qinghai-Tibet Plateau</startingLocation>
+     <endingLocation>East China Sea</endingLocation>
+</River>
+ equivalent to
+<?xml version="1.0"?>
+<River rdf:ID="Yangtze"
+            xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+            xmlns="http://www.geodesy.org/river#"
+            xmlns:r="http://www.geodesy.org/river#"
+            r:length="6300 kilometers"
+            r:startingLocation="western China's Qinghai-Tibet Plateau"
+            r:endingLocation="East China Sea"/>
+
+
+
+Syntax for indicating that a property is Transitive
+<owl:ObjectProperty rdf:ID="containedIn">
+           <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#TransitiveProperty"/>
+           <rdfs:domain rdf:resource="#Sea"/>
+           <rdfs:range rdf:resource="#BodyOfWater"/>
+     </owl:ObjectProperty>
+
+
+rdf:Property
+1.owl:ObjectProperty--owl:SymmetricProperty and owl:TransitiveProperty
+2.owl:DatatypeProperty
+3.owl:FunctionalProperty
+4.owl:InverseFunctionalProperty
+
+
+
+Syntax for indicating that a property is the inverse of another property
+ <owl:ObjectProperty rdf:ID="feedsFrom">
+           <owl:inverseOf rdf:resource="#emptiesInto"/>
+           <rdfs:domain rdf:resource="#BodyOfWater"/>
+           <rdfs:range rdf:resource="#River"/>
+     </owl:ObjectProperty>
+
+Syntax for indicating that a property is Inverse Functional
+  <owl:ObjectProperty rdf:ID="feedsFrom">
+           <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#InverseFunctionalProperty"/>
+           <owl:inverseOf rdf:resource="#emptiesInto"/>
+           <rdfs:domain rdf:resource="#BodyOfWater"/>
+           <rdfs:range rdf:resource="#River"/>
+     </owl:ObjectProperty>
+
+
+<owl:ObjectProperty rdf:ID="connectsTo">
+           <rdf:type rdf:resource="http://www.w3.org/2002/07/owl#SymmetricProperty"/>
+           <rdfs:domain rdf:resource="#NaturallyOccurringWaterSource"/>
+           <rdfs:range rdf:resource="#NaturallyOccurringWaterSource"/>
+</owl:ObjectProperty>
+
+equivalent to 
+
+<owl:SymmetricProperty rdf:ID="connectsTo">
+           <rdfs:domain rdf:resource="#NaturallyOccurringWaterSource"/>
+           <rdfs:range rdf:resource="#NaturallyOccurringWaterSource"/>
+</owl:SymmetricProperty>
+
+
+
+
+
+
+
